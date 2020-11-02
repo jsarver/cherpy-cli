@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 setup(
     name='cherpy_tools',
-    version='0.5',
+    version='0.5.1',
     packages=find_packages(),
     url='',
     license='',

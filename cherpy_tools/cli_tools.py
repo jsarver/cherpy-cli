@@ -4,7 +4,7 @@ from cherpy.api import config_from_file
 from cherpy.main import get_object_info, search_object, create_delete_requests
 from cherpy.utils import get_save_file_path, NameValueExtractor, get_open_file_path
 from cherpy_tools.utils import dict_to_csv, create_temp_file
-from cherpy_tools.runonestep import run_one_step, config_from_file,create_client
+from cherpy_tools.runonestep import run_one_step, create_client
 from loguru import logger
 
 

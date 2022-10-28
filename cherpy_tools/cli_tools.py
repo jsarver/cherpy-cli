@@ -1,6 +1,8 @@
+import subprocess
+
 import click
 from cherpy import config_from_env, get_object_schema, update_object_from_file
-from cherpy.api import config_from_file
+from cherpy.auth import config_from_file
 from cherpy.main import get_object_info, search_object, create_delete_requests
 from cherpy.utils import get_save_file_path, NameValueExtractor, get_open_file_path
 from cherpy_tools.utils import dict_to_csv, create_temp_file
@@ -19,13 +21,14 @@ def csm():
 @click.option('--onestep-name', default=None)
 @click.option('--scope', default="Global")
 @click.option('--scope-owner', default=None)
-def run_onestep_cli(object_name, env,onestep_name, scope, scope_owner):
+def run_onestep_cli(object_name, env, onestep_name, scope, scope_owner):
     logger.info(f'Current Env: {env}')
     cfg = config_from_env(env=env)
     url_part = cfg.host[:cfg.host.find("API")]
     url = f"{url_part}Service/api.asmx?WSDL"
     client = create_client(url, cfg.user, cfg.password)
-    response= run_one_step(client, object_name_or_id=object_name,scope=scope, scope_owner=scope_owner,onestep_name_or_id=onestep_name)
+    response = run_one_step(client, object_name_or_id=object_name, scope=scope, scope_owner=scope_owner,
+                            onestep_name_or_id=onestep_name)
     return response
 
 
@@ -88,18 +91,30 @@ def delete_objects_cli(object_name, env, chunk_size=300):
             click.echo("expection {}".format(e))
     return
 
+@click.command('publish')
+@click.option('--connection', prompt="Cherwell connection file")
+@click.option('--blueprint', prompt="blueprint Path ")
+def publish_blueprint(connection, blueprint):
+    subprocess.Popen('')
 
 @click.command('update')
 @click.option('--env', prompt="Please provide Environment to get config file")
 @click.option('--object-name', prompt="provide cherwell object")
-@click.option('--file-name', default=None)
-def update_object_cli(object_name, file_name=None, env=None):
+@click.option('--input-file-path', default=None)
+def update_object_cli(object_name, input_file_path=None, env=None):
+    """
+        :param env: Environmental variable storing location of configuration file
+        :param object_name: Name of the Cherwell object
+        :param ask_file: pass this flag if you want to be prompted for filename
+        :param input_file_path: filename of data for object you want to create
+        :return:
+    """
     client = config_from_env(env=env)
     client.login()
-    if not file_name:
-        file_name = get_open_file_path()
-    click.echo(file_name)
-    response = update_object_from_file(client=client, file_name=file_name, object_name=object_name, delimiter=",",
+    if not input_file_path:
+        input_file_path = get_open_file_path()
+    click.echo(input_file_path)
+    response = update_object_from_file(client=client, file_name=input_file_path, object_name=object_name, delimiter=",",
                                        encoding='utf-9-sig')
     count = 0
     for r in response.json()['responses']:
@@ -124,7 +139,7 @@ def create_object(object_name, ask_file, input_file=None, env=None, cfg_file=Non
     :param object_name: name of the Cherwell object
     :param ask_file: pass this flag if you want to be prompted for filename
     :param input_file: filename of data for object you want to create
-    :param env: variable storing location of configuration file
+    :param env: Environmental variable storing location of configuration file
     :param object_data: key value pairs for creating object
     :return:
     """

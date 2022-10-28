@@ -73,4 +73,6 @@ def run_one_step(client, object_name_or_id, recid=None, scope="Global", scope_ow
     onestep_name_or_id = "" if not onestep_name_or_id else onestep_name_or_id
     prompts = "" if not prompts else prompts
     response = client.service.RunOneStep(object_name_or_id, recid, scope, scope_owner, onestep_name_or_id, prompts)
+    if "not found" in response:
+        logger.error(response)
     return response

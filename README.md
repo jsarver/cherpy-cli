@@ -1,18 +1,21 @@
 A collection of CLI tools for interacting with Cherwell via Rest and SOAP
 
-Using this Library at your own risk!  It works but not ready for primetime.
-
-CLI Usage:
+Using this Library at your own risk!  It works but not ready for production.
 
 
-pip install chertools
+#Installation
 
 activate environment
 
-delete -object-name incident 
+pip install cherpy-cli
 
-create --object-name incident
+
+CLI Usage:
+
+create --object-name incident 
 
 search --object-name incident
+
+
 
 update --object-name incident
